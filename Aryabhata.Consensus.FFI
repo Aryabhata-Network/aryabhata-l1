@@ -1,0 +1,48 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE ScopedTypeVariables      #-}
+{-# LANGUAGE StrictData               #-}
+
+-- |
+-- Module: Aryabhata.Consensus.FFI
+-- Description: Safe, copy-based boundary between Rust and Haskell.
+module Aryabhata.Consensus.FFI
+  ( copyBytesFromRust
+  , maxFFIPayloadBytes
+  ) where
+
+import           Data.ByteString        (ByteString)
+import qualified Data.ByteString        as BS
+import           Foreign.Ptr            (Ptr, castPtr, nullPtr)
+import           Foreign.C.Types        (CSize(..))
+import           Foreign.Marshal.Utils  (copyBytes)
+import           GHC.Word               (Word8)
+
+--------------------------------------------------------------------------------
+-- Transport-level safety limits
+--------------------------------------------------------------------------------
+
+-- | Hard upper bound for any FFI payload (16 MB).
+maxFFIPayloadBytes :: Int
+maxFFIPayloadBytes = 16 * 1024 * 1024
+
+--------------------------------------------------------------------------------
+-- FFI Byte Copy
+--------------------------------------------------------------------------------
+
+-- | Safely copy raw bytes from Rust memory into Haskell-managed memory.
+--
+-- IMPROVEMENTS:
+-- • Uses 'BS.create' to allocate Haskell memory and copy the data.
+-- • Decouples Haskell memory lifecycle from Rust memory lifecycle.
+-- • Maintains strict adherence to the "No Crash" policy.
+copyBytesFromRust :: Ptr () -> CSize -> IO (Maybe ByteString)
+copyBytesFromRust ptr (CSize len)
+  | ptr == nullPtr                        = pure Nothing
+  | len <= 0                              = pure Nothing
+  | len > fromIntegral maxFFIPayloadBytes = pure Nothing
+  | otherwise = do
+      -- We allocate a new ByteString on the Haskell heap and copy
+      -- the contents from the Rust pointer into it.
+      Just <$> BS.create (fromIntegral len) (\destPtr ->
+          copyBytes destPtr (castPtr ptr) (fromIntegral len)
+        )
