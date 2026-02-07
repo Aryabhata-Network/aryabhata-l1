@@ -65,3 +65,26 @@ The protocol is divided into three immutable layers:
 ---
 
 ## 📂 Repository Structure
+---
+
+## 🧬 Technical Stack
+
+- **Haskell:** Deterministic consensus & state transitions
+- **Rust:** High-performance, no-authority execution shell
+- **FFI:** Byte-level, copy-based, crash-safe boundary
+- **Post-Quantum:** Dilithium (active), Kyber (future-ready)
+
+---
+
+## ⛓ Immutability Clause
+
+- Consensus rules are immutable after Genesis
+- Architectural boundaries are immutable
+- Implementations may change
+- Optimizations may evolve
+
+Any system violating these constraints is **not Aryabhata**.
+
+---
+
+**“Mathematical Supremacy. Implementation Independence.”**
