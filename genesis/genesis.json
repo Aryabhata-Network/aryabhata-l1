@@ -1,0 +1,14 @@
+{
+  "network_name": "ARYABHATA-L1",
+  "chain_id": "aryabhata-mainnet-1",
+
+  "consensus": {
+    "type": "ZeroPoW",
+    "max_block_size_bytes": 2097152
+  },
+
+  "initial_state": {
+    "total_supply_units": "21000000000000",
+    "accounts": []
+  }
+}
