@@ -1,0 +1,60 @@
+[package]
+name = "aryabhata-execution"
+version = "0.1.0"
+edition = "2021"
+authors = ["Aryabhata Network"]
+description = "Execution and networking layer for Aryabhata Layer-1 (consensus-blind)"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/Aryabhata-Network/aryabhata-l1"
+publish = false
+
+[lib]
+name = "aryabhata_execution"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+test = false
+bench = false
+
+# ===============================
+# DEPENDENCIES (MINIMAL & SAFE)
+# ===============================
+[dependencies]
+# Deterministic serialization (data only)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+
+# Async runtime (NO time authority)
+tokio = { version = "1.36", features = ["rt-multi-thread", "net", "sync"] }
+
+# Error handling
+thiserror = "1.0"
+
+# Utilities (no randomness, no crypto, no time)
+hex = "0.4"
+bytes = "1.5"
+
+# ===============================
+# BUILD PROFILE (MOBILE-FIRST)
+# ===============================
+[profile.release]
+opt-level = "z"       # optimize for size
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+# ===============================
+# FEATURES
+# ===============================
+[features]
+default = ["std"]
+
+std = []
+
+# Explicit marker: execution layer has no consensus authority
+execution-only = []
