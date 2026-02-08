@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/aryabhata-symbol.jpg" alt="Aryabhata Layer-1 Symbol" width="420">
+</p>
+
 # 🌌 ARYABHATA LAYER-1 PROTOCOL
 **Status: Core Frozen — Phase: Pre-Genesis**
 
