@@ -44,14 +44,19 @@
 ## 🧠 Architecture
 
 **FORMAL PROOF LAYER**
+
 Protocol invariants — immutable after genesis
 
 **CONSENSUS ENGINE (Haskell)**
+
 Pure, deterministic, no IO, no side-effects
+
 SUNYA-PoW: Work + Time + Silence (CNS >= 0.60)
 
 **EXECUTION SHELL (Rust)**
+
 no_std — Stateless, memory-safe transport
+
 Mobile-first: Android / Termux AArch64
 
 ---
@@ -101,7 +106,13 @@ pkg update && pkg install rust clang git
 git clone https://github.com/Aryabhata-Network/aryabhata-l1.git
 cd aryabhata-l1/rust
 cargo build --release
-📂 Repository Structure
+```
+
+---
+
+## 📂 Repository Structure
+
+```
 aryabhata-l1/
 ├── docs/
 │   ├── v1/                  Archived whitepaper v1.0
@@ -118,7 +129,15 @@ aryabhata-l1/
 │   └── Proof/               Property tests
 ├── genesis/                 Genesis block config
 └── scripts/                 Helper scripts
-⚠️ Disclaimer
+```
+
+---
+
+## ⚠️ Disclaimer
+
 Aryabhata (ARY) is not an investment product.
 This protocol is provided AS-IS. Participation is at your own risk.
-ARYABHATA NETWORK — 2025
+
+---
+
+**ARYABHATA NETWORK — 2025**
