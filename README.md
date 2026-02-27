@@ -42,14 +42,18 @@
 ---
 
 ## 🧠 Architecture
-FORMAL PROOF LAYER
-└── Protocol invariants — immutable after genesis
-CONSENSUS ENGINE (Haskell)
-└── Pure, deterministic, no IO, no side-effects
-└── SUNYA-PoW: Work + Time + Silence (CNS >= 0.60)
-EXECUTION SHELL (Rust)
-└── no_std — Stateless, memory-safe transport
-└── Mobile-first: Android / Termux AArch64
+
+**FORMAL PROOF LAYER**
+Protocol invariants — immutable after genesis
+
+**CONSENSUS ENGINE (Haskell)**
+Pure, deterministic, no IO, no side-effects
+SUNYA-PoW: Work + Time + Silence (CNS >= 0.60)
+
+**EXECUTION SHELL (Rust)**
+no_std — Stateless, memory-safe transport
+Mobile-first: Android / Termux AArch64
+
 ---
 
 ## 🔐 Cryptographic Stack
@@ -65,7 +69,9 @@ EXECUTION SHELL (Rust)
 ---
 
 ## ⛏️ SUNYA-PoW — Three Conditions
-valid(B) = WORK(B) AND TIME(B) AND SILENCE(miner)
+
+`valid(B) = WORK(B) AND TIME(B) AND SILENCE(miner)`
+
 | Condition | Rule |
 |---|---|
 | **WORK** | SHA3-256 hash meets target difficulty |
@@ -98,20 +104,20 @@ cargo build --release
 📂 Repository Structure
 aryabhata-l1/
 ├── docs/
-│   ├── v1/                  ← Archived whitepaper v1.0
-│   └── v2/                  ← Current whitepaper v2.0
+│   ├── v1/                  Archived whitepaper v1.0
+│   └── v2/                  Current whitepaper v2.0
 ├── rust/src/
-│   ├── network/             ← P2P transport layer
-│   ├── mining/              ← SUNYA-PoW miner
-│   ├── crypto/              ← Dilithium5, Kyber, SHA3
-│   ├── ffi/                 ← Haskell FFI boundary
-│   └── node/                ← Node lifecycle
+│   ├── network/             P2P transport layer
+│   ├── mining/              SUNYA-PoW miner
+│   ├── crypto/              Dilithium5, Kyber, SHA3
+│   ├── ffi/                 Haskell FFI boundary
+│   └── node/                Node lifecycle
 ├── haskell/src/Aryabhata/
-│   ├── Consensus/           ← Pure state transitions
-│   ├── Types/               ← Protocol types
-│   └── Proof/               ← Property tests
-├── genesis/                 ← Genesis block config
-└── scripts/                 ← Helper scripts
+│   ├── Consensus/           Pure state transitions
+│   ├── Types/               Protocol types
+│   └── Proof/               Property tests
+├── genesis/                 Genesis block config
+└── scripts/                 Helper scripts
 ⚠️ Disclaimer
 Aryabhata (ARY) is not an investment product.
 This protocol is provided AS-IS. Participation is at your own risk.
