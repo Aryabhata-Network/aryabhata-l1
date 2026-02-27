@@ -1,14 +1,49 @@
 {
-  "network_name": "ARYABHATA-L1",
-  "chain_id": "aryabhata-mainnet-1",
-
-  "consensus": {
-    "type": "ZeroPoW",
-    "max_block_size_bytes": 2097152
+  "protocol": "Aryabhata",
+  "version": "2.0",
+  "native_asset": "ARY",
+  "total_supply": 14000000000,
+  "premine": 0,
+  "founder_allocation": 0,
+  "airdrop": 0,
+  "genesis_reward_per_block": 0.25,
+  "consensus": "SUNYA-PoW",
+  "sunya_pow": {
+    "condition_work": "SHA3-256",
+    "condition_time_min_seconds": 45,
+    "condition_time_max_seconds": 180,
+    "condition_silence_min_cns": 0.60
   },
-
-  "initial_state": {
-    "total_supply_units": "21000000000000",
-    "accounts": []
-  }
+  "cryptography": {
+    "signature": "CRYSTALS-Dilithium5",
+    "kem": "CRYSTALS-Kyber1024",
+    "hash": "SHA3-512",
+    "pow_hash": "SHA3-256",
+    "kdf": "Argon2id"
+  },
+  "block": {
+    "target_time_seconds": 60,
+    "difficulty_adjustment_interval": 720,
+    "max_adjustment_percent": 25
+  },
+  "cns": {
+    "formula": "0.60 * uptime + 0.25 * restart_stability + 0.15 * propagation_score",
+    "min_to_mine": 0.60,
+    "elite_threshold": 0.80,
+    "expelled_threshold": 0.20,
+    "measurement_epochs": 100
+  },
+  "treasury": {
+    "fee_percent": 2,
+    "time_lock_epochs": 90,
+    "max_spend_per_period_percent": 10,
+    "multisig": "3-of-5"
+  },
+  "mobile": {
+    "target_binary_size_mb": 15,
+    "target_ram_mb": 120,
+    "thermal_limit_celsius": 42,
+    "platform": "Android AArch64 / Termux"
+  },
+  "status": "pre-genesis"
 }
