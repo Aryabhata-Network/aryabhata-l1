@@ -1,81 +1,54 @@
-//! Foreign Function Interface (FFI) boundary for Aryabhata Layer-1.
-//!
-//! This module defines a strictly mechanical, versioned, and discoverable
-//! byte-transport contract between Rust and the Haskell consensus engine.
-//!
-//! Rust has ZERO protocol authority.
+// Haskell FFI Boundary — Safety Contract
+// Rule 1: All data = [u32 length] + [u8 bytes]
+// Rule 2: No raw pointers — ever
+// Rule 3: No shared memory — ever
+// Rule 4: Rust owns all buffers
+// Rule 5: Haskell reads copies only
+// Rule 6: Every call has 500ms deadline
+// Rule 7: Version mismatch = hard reject
 
-#![no_std]
-#![forbid(unsafe_op_in_unsafe_fn)]
+pub const FFI_PROTOCOL_VERSION: u8 = 2;
+pub const FFI_TIMEOUT_MS: u64 = 500;
 
-use core::ffi::c_void;
-
-/// FFI ABI version implemented by this Rust binary.
-pub const FFI_ABI_VERSION: u32 = 1;
-
-/// Maximum payload size allowed for any FFI call (bytes).
-///
-/// Mechanical transport limit only (mobile safety).
-pub const FFI_MAX_PAYLOAD_BYTES: usize = 16 * 1024 * 1024; // 16 MB
-
-/// Mechanical FFI result codes.
-///
-/// These codes carry NO protocol meaning.
-#[repr(C)]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum FfiStatus {
-    /// Operation mechanically valid
-    Ok = 0,
-    /// Null pointer passed
-    NullPointer = 1,
-    /// Length is zero
-    ZeroLength = 2,
-    /// Length exceeds allowed transport limit
-    LengthExceeded = 3,
-    /// ABI version mismatch
-    AbiMismatch = 4,
+pub enum FfiError {
+    Timeout,
+    VersionMismatch,
+    InvalidLength,
+    InvalidData,
+    HaskellPanic,
 }
 
-/// Internal mechanical validation.
-#[inline(always)]
-fn validate(ptr: *const c_void, len: usize) -> FfiStatus {
-    if ptr.is_null() {
-        return FfiStatus::NullPointer;
-    }
-    if len == 0 {
-        return FfiStatus::ZeroLength;
-    }
-    if len > FFI_MAX_PAYLOAD_BYTES {
-        return FfiStatus::LengthExceeded;
-    }
-    FfiStatus::Ok
+pub struct FfiRequest {
+    pub version: u8,
+    pub length: u32,
+    pub data: [u8; 4096],
 }
 
-/// Forward opaque bytes across the FFI boundary.
-///
-/// # Safety
-/// - Caller guarantees pointer validity and lifetime for call duration
-/// - Data MUST NOT be mutated concurrently
-#[no_mangle]
-pub unsafe extern "C" fn ffi_forward(
-    ptr: *const c_void,
-    len: usize,
-    expected_abi: u32,
-) -> FfiStatus {
-    if expected_abi != FFI_ABI_VERSION {
-        return FfiStatus::AbiMismatch;
+pub struct FfiResponse {
+    pub version: u8,
+    pub length: u32,
+    pub data: [u8; 4096],
+}
+
+impl FfiRequest {
+    pub fn new(payload: &[u8]) -> Result<Self, FfiError> {
+        if payload.len() > 4096 {
+            return Err(FfiError::InvalidLength);
+        }
+        let mut data = [0u8; 4096];
+        data[..payload.len()].copy_from_slice(payload);
+        Ok(Self {
+            version: FFI_PROTOCOL_VERSION,
+            length: payload.len() as u32,
+            data,
+        })
     }
-    validate(ptr, len)
-}
 
-/// Query ABI version implemented by Rust.
-#[no_mangle]
-pub extern "C" fn ffi_query_abi() -> u32 {
-    FFI_ABI_VERSION
+    // Verify version before any processing
+    pub fn verify_version(&self) -> Result<(), FfiError> {
+        if self.version != FFI_PROTOCOL_VERSION {
+            return Err(FfiError::VersionMismatch);
+        }
+        Ok(())
+    }
 }
-
-/// Query maximum payload size allowed by Rust execution shell.
-#[no_mangle]
-pub extern "C" fn ffi_query_max_payload() -> usize {
-    FFI_MAX_PAYLOAD_BYTES
-  }
