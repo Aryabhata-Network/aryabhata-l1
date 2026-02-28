@@ -1,0 +1,20 @@
+# Rust
+rust/target/
+Cargo.lock
+
+# Haskell
+haskell/dist-newstyle/
+**/*.o
+**/*.hi
+
+# System
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# NEVER commit keys
+*.key
+*.pem
+*.seed
+wallet.json
