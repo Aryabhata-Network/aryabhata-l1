@@ -10,11 +10,33 @@ library
       Aryabhata.Consensus.Core
     , Aryabhata.Consensus.CNS
     , Aryabhata.Consensus.Difficulty
+    , Aryabhata.Consensus.Supply
+    , Aryabhata.Consensus.Penalty
+    , Aryabhata.Consensus.State
+    , Aryabhata.Consensus.Mempool
+    , Aryabhata.Consensus.Checkpoint
+    , Aryabhata.Consensus.Fork
+    , Aryabhata.Consensus.Reward
+    , Aryabhata.Consensus.UTXO
     , Aryabhata.Types.Block
     , Aryabhata.Types.Transaction
     , Aryabhata.Proof.Properties
+    , Aryabhata.Proof.ConsensusTests
+    , Aryabhata.Proof.SecurityTests
+    , Aryabhata.Proof.SupplyTests
+    , Aryabhata.Proof.UTXOTests
+  build-depends:
+      base       >= 4.14
+    , QuickCheck >= 2.14
+    , bytestring >= 0.11
+  default-language: Haskell2010
+  ghc-options: -Wall -Werror -O2
+
+test-suite aryabhata-tests
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   src
+  main-is:          Aryabhata/Proof/Properties.hs
   build-depends:
       base       >= 4.14
     , QuickCheck >= 2.14
   default-language: Haskell2010
-  ghc-options: -Wall -Werror -O2
