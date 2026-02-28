@@ -1,61 +1,30 @@
-// P2P Network Layer
-// Fixed-frame messages — prevents traffic analysis by AI
-// Peer limit: 8 minimum, 24 maximum
-// Diversity scoring — prevents eclipse attacks
+pub mod message;
+pub mod peer;
+
+pub use message::{Message, MessageType};
+pub use peer::{PeerInfo, PeerSet};
 
 pub const MIN_PEERS: usize = 8;
 pub const MAX_PEERS: usize = 24;
 
-// All messages padded to fixed sizes
-// Eliminates message-size fingerprinting
-pub enum FrameSize {
-    Small  = 512,
-    Medium = 4096,
-    Large  = 65536,
-}
-
-pub enum MessageType {
-    BlockPropose,
-    BlockAck,
-    TxBroadcast,
-    PeerExchange,
-    CnsProbe,
-    Ping,
-    Pong,
-}
-
-pub struct Peer {
-    pub cns_score: f64,
-    pub is_active: bool,
-}
-
 pub struct Network {
-    pub peers: [Option<Peer>; 24],
-    pub peer_count: usize,
+    pub peers: PeerSet,
 }
 
 impl Network {
     pub fn new() -> Self {
-        const NONE_PEER: Option<Peer> = None;
         Self {
-            peers: [NONE_PEER; 24],
-            peer_count: 0,
+            peers: PeerSet::new(),
         }
     }
 
-    // Reject connection if peer limit reached
-    pub fn can_add_peer(&self) -> bool {
-        self.peer_count < MAX_PEERS
+    pub fn is_ready(&self) -> bool {
+        self.peers.has_minimum()
     }
 
-    // Drop unsolicited unknown messages silently
-    // Silence is the correct response to noise
-    pub fn handle_unknown_message(&self) {
-        // Do nothing — no error, no response
-    }
-
-    // Check minimum peer requirement
-    pub fn has_minimum_peers(&self) -> bool {
-        self.peer_count >= MIN_PEERS
+    pub fn handle_message(&self, msg: &Message) {
+        if !msg.is_known_type() {
+            return;
+        }
     }
 }
