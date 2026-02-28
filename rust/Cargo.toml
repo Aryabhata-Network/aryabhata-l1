@@ -10,11 +10,18 @@ name = "aryabhata-node"
 path = "src/main.rs"
 
 [dependencies]
-zeroize = { version = "1.7", features = ["derive"] }
+zeroize            = { version = "1.7", features = ["derive"] }
+sha3               = "0.10"
+blake3             = "1.5"
+argon2             = "0.5"
+subtle             = "2.5"
+pqcrypto-dilithium = "0.5"
+pqcrypto-kyber     = "0.8"
+pqcrypto-traits    = "0.3"
 
 [profile.release]
-opt-level = 3
-lto = true
+opt-level     = 3
+lto           = true
 codegen-units = 1
-strip = true
-panic = "abort"
+strip         = true
+panic         = "abort"
