@@ -1,24 +1,30 @@
-use alloc::string::String;
+pub mod config;
+pub mod cns_tracker;
+pub mod lifecycle;
+pub mod storage;
+pub mod treasury;
+pub mod wallet;
 
-pub struct Node {
-    pub version: &'static str,
-    pub status: &'static str,
-}
+pub use config::NodeConfig;
+pub use lifecycle::{NodeLifecycle, NodeState};
+
+pub struct Node;
 
 impl Node {
     pub fn start() {
-        let node = Node {
-            version: "0.2.0",
-            status: "pre-genesis",
-        };
-        node.init();
-    }
+        let config = NodeConfig::termux();
+        let mut lifecycle = NodeLifecycle::new(config);
 
-    fn init(&self) {
-        // Node lifecycle begins here
-        // Consensus truth comes from Haskell via FFI
-        // Rust only moves bytes — no authority
-        let _ = self.version;
-        let _ = self.status;
+        if !lifecycle.has_enough_peers() {
+            return;
+        }
+
+        if !lifecycle.thermal_ok() {
+            return;
+        }
+
+        if lifecycle.can_mine() {
+            lifecycle.state = NodeState::Mining;
+        }
     }
 }
