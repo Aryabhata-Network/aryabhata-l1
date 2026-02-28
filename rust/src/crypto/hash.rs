@@ -1,16 +1,28 @@
-// SHA3-256 — SUNYA-PoW puzzle
-// SHA3-512 — Block hash, transaction hash
-// BLAKE3   — Merkle tree
-// No MD5, no SHA1, no SHA2 — ever
+use sha3::{Digest, Sha3_256, Sha3_512};
+use blake3::Hasher as Blake3Hasher;
 
 pub const HASH_SIZE_256: usize = 32;
 pub const HASH_SIZE_512: usize = 64;
 
-pub struct Hash256([u8; HASH_SIZE_256]);
-pub struct Hash512([u8; HASH_SIZE_512]);
+pub struct Hash256(pub [u8; HASH_SIZE_256]);
+pub struct Hash512(pub [u8; HASH_SIZE_512]);
 
 impl Hash256 {
-    pub fn from_bytes(bytes: [u8; HASH_SIZE_256]) -> Self {
+    pub fn sha3_256(data: &[u8]) -> Self {
+        let mut hasher = Sha3_256::new();
+        hasher.update(data);
+        let result = hasher.finalize();
+        let mut bytes = [0u8; HASH_SIZE_256];
+        bytes.copy_from_slice(&result);
+        Self(bytes)
+    }
+
+    pub fn blake3(data: &[u8]) -> Self {
+        let mut hasher = Blake3Hasher::new();
+        hasher.update(data);
+        let result = hasher.finalize();
+        let mut bytes = [0u8; HASH_SIZE_256];
+        bytes.copy_from_slice(result.as_bytes());
         Self(bytes)
     }
 
@@ -18,11 +30,8 @@ impl Hash256 {
         &self.0
     }
 
-    // Check if hash meets difficulty target
-    // Leading zeros method
     pub fn meets_difficulty(&self, difficulty: u32) -> bool {
-        let leading_zeros = self.count_leading_zero_bits();
-        leading_zeros >= difficulty
+        self.count_leading_zero_bits() >= difficulty
     }
 
     fn count_leading_zero_bits(&self) -> u32 {
@@ -41,13 +50,17 @@ impl Hash256 {
 
 impl Drop for Hash256 {
     fn drop(&mut self) {
-        // Wipe hash from memory
         self.0.iter_mut().for_each(|b| *b = 0);
     }
 }
 
 impl Hash512 {
-    pub fn from_bytes(bytes: [u8; HASH_SIZE_512]) -> Self {
+    pub fn sha3_512(data: &[u8]) -> Self {
+        let mut hasher = Sha3_512::new();
+        hasher.update(data);
+        let result = hasher.finalize();
+        let mut bytes = [0u8; HASH_SIZE_512];
+        bytes.copy_from_slice(&result);
         Self(bytes)
     }
 
